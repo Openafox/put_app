@@ -133,7 +133,7 @@ class gui(QtGui.QMainWindow):
         MainWindow.setStatusBar(self.statusbar)
 
         # Button Actions #for testing#
-        # self.page0.StartButton.clicked.connect(lambda: self.stack.setPage(1))
+        self.page0.StartButton.clicked.connect(lambda: self.stack.setPage(1))
         # page0Button.clicked.connect(lambda: self.stack.setPage(0))
         # page1Button.clicked.connect(lambda: self.stack.setPage(1))
         # page2Button.clicked.connect(lambda: self.stack.setPage(2))
@@ -179,6 +179,10 @@ class Pagesetup(QtGui.QWidget):
 
 # Setup page 1 (Log On)
     def setupUi(self):
+        self.Title = QtGui.QLabel()
+        self.Title.setFont(font_B)
+        self.Title.setAlignment(QtCore.Qt.AlignCenter |
+                                QtCore.Qt.AlignVCenter)
         # User Name
         self.Box1 = QtGui.QComboBox()
         self.Label1 = QtGui.QLabel()
@@ -254,6 +258,7 @@ class Page0(Pagesetup):
         self.initUi()
 
     def setupUiedits(self):
+        self.Title.setText(_fromUtf8("Log On"))
         self.Box1.setToolTip('Please select your name')
         self.Box2.setToolTip('Please input your password')
         self.Box3.setToolTip('Please input the index code you would like to '
@@ -289,6 +294,7 @@ class Page0(Pagesetup):
         self.vbox = QtGui.QVBoxLayout()
         # add Layouts
         self.vbox.addWidget(self.menu)
+        self.vbox.addWidget(self.Title)
         self.vbox.addLayout(self.FormLayout)
         self.vbox.addWidget(self.StartButton)
 
@@ -305,6 +311,7 @@ class Page1(Pagesetup):
         self.initUi()
 
     def setupUiedits(self):
+        self.Title.setText(_fromUtf8("Add User"))
         self.Box1.setToolTip('Please use your full name as'
                              'on your student ID.')
         self.Box2.setToolTip('Please select a unique Password.<br>'
@@ -337,6 +344,7 @@ class Page1(Pagesetup):
         self.vbox = QtGui.QVBoxLayout()
         # add Layouts
         self.vbox.addWidget(self.menu)
+        self.vbox.addWidget(self.Title)
         self.vbox.addLayout(self.FormLayout)
         self.vbox.addLayout(self.hbox)
     # Finish Page Setup
@@ -352,6 +360,7 @@ class Page2(Pagesetup):
         self.initUi()
 
     def setupUiedits(self):
+        self.Title.setText(_fromUtf8("Active"))
 
         # username
         self.Box1 = QtGui.QLineEdit()
@@ -388,6 +397,7 @@ class Page2(Pagesetup):
     # Setup Vertical Box Layout
         self.vbox = QtGui.QVBoxLayout()
         # add Layouts
+        self.vbox.addWidget(self.Title)
         self.vbox.addLayout(self.FormLayout)
         self.vbox.addLayout(self.hbox)
     # Finish Page Setup
@@ -403,16 +413,18 @@ class Page3(Pagesetup):
         self.initUi()
 
     def setupUiedits(self):
+        self.Title.setText(_fromUtf8("Program Setup"))
 
         # Program
         self.Box1 = QtGui.QLineEdit()
-        self.Label1.setText(_fromUtf8("Program:"))
+        self.Label1.setText(_fromUtf8("Program Path"))
         self.Box1.setReadOnly(True)
         self.Box1.setStyleSheet(styl)
-        # Path
-        self.Label2.setText(_fromUtf8("Path:"))
-        self.Box2.setReadOnly(True)
-        self.Box2.setStyleSheet(styl)
+
+        self.ChButton = QtGui.QPushButton("Change Shortcuts")
+        self.ChButton.resize(100, 60)
+        self.ChButton.setFont(font_B)
+        self.ChButton.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
 
         self.StartButton.setText("Change Program")
         self.QuitButton.setText("Revert Shortcuts")
@@ -420,17 +432,17 @@ class Page3(Pagesetup):
     def initUi(self):
         # Buttons (horisontal box)
         self.hbox = QtGui.QHBoxLayout()
-        self.hbox.addWidget(self.StartButton)
+        self.hbox.addWidget(self.ChButton)
         self.hbox.addWidget(self.QuitButton)
 
     # Setup Vertical Box Layout
         self.vbox = QtGui.QVBoxLayout()
         # add Layouts
         self.vbox.addWidget(self.menu)
+        self.vbox.addWidget(self.Title)
         self.vbox.addWidget(self.Label1)
         self.vbox.addWidget(self.Box1)
-        self.vbox.addWidget(self.Label2)
-        self.vbox.addWidget(self.Box2)
+        self.vbox.addWidget(self.StartButton)
         self.vbox.addLayout(self.hbox)
     # Finish Page Setup
         self.setLayout(self.vbox)
@@ -445,6 +457,7 @@ class Page4(Pagesetup):
         self.initUi()
 
     def setupUiedits(self):
+        self.Title.setText(_fromUtf8("Remove User"))
         self.Box1.setToolTip('Please select user to remove')
         self.Box2.setToolTip('Please input admin password')
         self.Label2.setText(_fromUtf8("Admin Password:"))
@@ -464,6 +477,7 @@ class Page4(Pagesetup):
         self.vbox = QtGui.QVBoxLayout()
         # add Layouts
         self.vbox.addWidget(self.menu)
+        self.vbox.addWidget(self.Title)
         self.vbox.addLayout(self.FormLayout)
         self.vbox.addLayout(self.hbox)
 
@@ -480,6 +494,7 @@ class Page5(Pagesetup):
         self.initUi()
 
     def setupUiedits(self):
+        self.Title.setText(_fromUtf8("Change Password"))
         self.Box1.setToolTip('Select User Name')
         self.Box3.setToolTip('Please select a unique Password.<br>'
                              'Passwords are hashed and realitivly secure.<br>'
@@ -528,6 +543,7 @@ class Page5(Pagesetup):
         self.vbox = QtGui.QVBoxLayout()
         # add Layouts
         self.vbox.addWidget(self.menu)
+        self.vbox.addWidget(self.Title)
         self.vbox.addLayout(self.FormLayout)
         self.vbox.addLayout(self.hbox)
     # Finish Page Setup
