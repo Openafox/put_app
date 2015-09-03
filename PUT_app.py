@@ -15,6 +15,7 @@ import sys  # list of comand line argus need to run Gui
 import PUT_Gui
 import time        # yep importing time that way we can go back to the future
 import Pass     # My Password Modul
+import subprocess  # running other processes
 
 
 class APP(PUT_Gui.gui):
@@ -23,6 +24,10 @@ class APP(PUT_Gui.gui):
 
 # define globals
     quit = False
+    with open("Dest.txt", "r") as data_file:
+        dest = data_file.readline()
+        print dest
+    process = None
 # Creat a python signal that will be used to pass app history stuff
 
     def __init__(self):
@@ -75,7 +80,6 @@ class APP(PUT_Gui.gui):
 
 # Start the program if password is correct or open admin page
     def program_start(self):
-        global quit
         name = str(self.page0.Box1.currentText())
         pass1 = str(self.page0.Box2.text())
         print name
@@ -87,14 +91,12 @@ class APP(PUT_Gui.gui):
                 if name == "Admin":
                     self.stack.setPage(1)
                 else:
-                    with open("Dest.txt", "r") as data_file:
-                        dest = data_file.readline()
-                    print dest
                     self.page2.Box1.setText(name)
                     self.page2.Box2.setText(time.strftime("%y-%m-%d-%H:%M:%S"))
                     self.page2.Box4.setText("Under Construction")
                     self.stack.setPage(2)
-                    quit = False
+                    self.quit = False
+                    self.process = subprocess.Popen([self.dest])
                     self.program_check()
             else:
                 return
@@ -163,7 +165,9 @@ class APP(PUT_Gui.gui):
 
 # Check if program is running
     def program_check(self):
-        if quit is False:
+        if self.process.poll() != None:
+            self.quit = True
+        if self.quit is False:
             start = time.mktime(time.strptime(self.page2.Box2.text(),
                                 "%y-%m-%d-%H:%M:%S"))
             print start
@@ -172,12 +176,15 @@ class APP(PUT_Gui.gui):
             self.page2.Box3.setText(time.strftime("%H:%M:%S",
                                                   time.gmtime(diff)))
             QtCore.QTimer.singleShot(5000, self.program_check)
+        else:
+            self.stack.setPage(0)
+
 
 # Quit the program
     def program_close(self):
-        global quit
-        quit = True
+        self.quit = True
         self.stack.setPage(0)
+        self.process.terminate()
 
 # Set up program to start and change all shortcuts
     def program_setup(self):
