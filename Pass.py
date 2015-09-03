@@ -121,4 +121,6 @@ def checkpass(name, pass1):  # Check Password
 
 if __name__ == "__main__":
     print Addusr("Admin", "Password", "Password", "Glob", "email")
+    print Addusr("Joe", "123456", "123456", "Glob", "email")
     print checkpass("Admin", "Pass")
+    print checkpass("Joe", "123456")

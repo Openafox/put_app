@@ -383,11 +383,11 @@ class Page2(Pagesetup):
         self.Box2.setEchoMode(QtGui.QLineEdit.Normal)
         self.Box2.setStyleSheet(styl)
         # Total time
-        self.Label3.setText(_fromUtf8("Total Time Today [mins]:"))
+        self.Label3.setText(_fromUtf8("Total Time Today:"))
         self.Box3.setReadOnly(True)
         self.Box3.setStyleSheet(styl)
         # Tolal Time this Month
-        self.Label4.setText(_fromUtf8("Total Time This Month [hrs]:"))
+        self.Label4.setText(_fromUtf8("Total Time This Month:"))
         self.Box4.setReadOnly(True)
         self.Box4.setStyleSheet(styl)
 

@@ -10,24 +10,19 @@ A -- apple
 
 import pdb
 import sys
+import os
 from PyQt4 import QtCore, QtGui
 import sys  # list of comand line argus need to run Gui
 import PUT_Gui
 import time        # yep importing time that way we can go back to the future
 import Pass     # My Password Modul
 import subprocess  # running other processes
-
+import WinShorts  # My Modul for changing and checking windows shortcuts
 
 class APP(PUT_Gui.gui):
     """"This Class is used to create the Gui for the PUT_app and
     to controll it."""
 
-# define globals
-    quit = False
-    with open("Dest.txt", "r") as data_file:
-        dest = data_file.readline()
-        print dest
-    process = None
 # Creat a python signal that will be used to pass app history stuff
 
     def __init__(self):
@@ -36,11 +31,20 @@ class APP(PUT_Gui.gui):
         # initialize the serial connections
 
     def run(self):
+        # define "globals"
+        self.quit = False
+        with open("Dest.txt", "r") as data_file:
+            self.dest = data_file.readline()
+        # print self.dest
+        self.page3.Box1.setText(self.dest)
+        self.process = None
         # Set up Button Click and change event refs (Slots)
         self.page0.StartButton.clicked.connect(self.program_start)
         self.page1.StartButton.clicked.connect(self.user_add)
         self.page2.QuitButton.clicked.connect(self.program_close)
         self.page3.StartButton.clicked.connect(self.program_setup)
+        self.page3.QuitButton.clicked.connect(self.program_short_rev)
+        self.page3.ChButton.clicked.connect(self.program_short_ch)
         self.page4.StartButton.clicked.connect(self.user_rm)
         self.page5.StartButton.clicked.connect(self.user_chpass)
         
@@ -82,8 +86,8 @@ class APP(PUT_Gui.gui):
     def program_start(self):
         name = str(self.page0.Box1.currentText())
         pass1 = str(self.page0.Box2.text())
-        print name
-        print pass1
+        # print name
+        # print pass1
         test = Pass.checkpass(name, pass1)
         if test is True:
             if self.user_checks(name) is True:
@@ -96,8 +100,18 @@ class APP(PUT_Gui.gui):
                     self.page2.Box4.setText("Under Construction")
                     self.stack.setPage(2)
                     self.quit = False
+                    hr = 0.0
+                    fname = "%s_Log.csv" % str(time.strftime("%y_%m"))
+                    with open(fname, "r") as data_file:
+                        for row in data_file:
+                            if name in row:
+                                data = row.split(",")
+                                ti = time.strptime(data[4],"%H:%M:%S")
+                                hr += ti[3] + ti[4]/60.0 + ti[5]/3600.0
+                        self.page2.Box4.setText(str(round(hr,2)))
+                                
                     self.process = subprocess.Popen([self.dest])
-                    self.program_check()
+                    self.program_check() 
             else:
                 return
         else:
@@ -170,25 +184,75 @@ class APP(PUT_Gui.gui):
         if self.quit is False:
             start = time.mktime(time.strptime(self.page2.Box2.text(),
                                 "%y-%m-%d-%H:%M:%S"))
-            print start
+            # print start
             diff = time.time() - start
-            print diff
+            # print diff
             self.page2.Box3.setText(time.strftime("%H:%M:%S",
                                                   time.gmtime(diff)))
-            QtCore.QTimer.singleShot(5000, self.program_check)
+            QtCore.QTimer.singleShot(1000, self.program_check)
         else:
+            self.user_log()
             self.stack.setPage(0)
 
 
 # Quit the program
     def program_close(self):
         self.quit = True
-        self.stack.setPage(0)
         self.process.terminate()
+
+
+# Log users time
+    def user_log(self):
+        start = str(self.page2.Box2.text())
+        user = str(self.page2.Box1.text())
+        userdata = Pass.getuserdata(user, False)
+        advisor = userdata[2]
+        index = userdata[3]
+        date = str(self.page2.Box3.text())
+        data = [start, user, advisor, index, date, "\n"]
+        data = ','.join(data)
+        fname = "%s_Log.csv" % str(time.strftime("%y_%m"))
+        with open(fname, "a") as out_file:
+            out_file.write(data)
+        
 
 # Set up program to start and change all shortcuts
     def program_setup(self):
-        pass
+        fname = QtGui.QFileDialog.getOpenFileName(self, 'Program to run',
+                                                  '/home')
+        if fname:
+            with open("Dest.txt", "w") as data_file:
+                data_file.write(fname)
+            self.dest = fname
+            self.page3.Box1.setText(self.dest)
+
+
+# Set up program to start and change all shortcuts
+    def program_short_ch(self):
+        me_path = os.path.realpath(__file__)
+        print me_path
+        if WinShorts.check_win() is False:     
+            self.win_only()
+        else:
+            files = WinShorts.find_links() # need to test depth = 1
+            WinShorts.change_links(self.dest, me_path, files)
+
+# Set up program to start and change all shortcuts
+    def program_short_rev(self):
+        if WinShorts.check_win() is False:     
+            self.win_only()
+        else:
+            files = WinShorts.find_links() # need to test depth = 1
+            WinShorts.change_links(self.dest, self.dest, files)
+
+# Message for Win only features
+    def win_only(self):
+        text = "Sorry this feature is only available for windows"
+        QtGui.QMessageBox.warning(self, "Error!",
+                                  text, QtGui.QMessageBox.Ok,
+                                  QtGui.QMessageBox.NoButton,
+                                  QtGui.QMessageBox.NoButton)
+
 
 # Add a User
     def user_add(self):
@@ -244,7 +308,10 @@ class APP(PUT_Gui.gui):
                 QtGui.QMessageBox.No, QtGui.QMessageBox.No
                 )
 
+        index =  self.stack.currentIndex()
         if reply == QtGui.QMessageBox.Yes:
+            if index == 2:
+                self.user_log()
             event.accept()
         else:
             event.ignore()
