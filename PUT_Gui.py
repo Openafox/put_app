@@ -133,7 +133,7 @@ class gui(QtGui.QMainWindow):
         MainWindow.setStatusBar(self.statusbar)
 
         # Button Actions #for testing#
-        self.page0.StartButton.clicked.connect(lambda: self.stack.setPage(1))
+        # self.page0.StartButton.clicked.connect(lambda: self.stack.setPage(1))
         # page0Button.clicked.connect(lambda: self.stack.setPage(0))
         # page1Button.clicked.connect(lambda: self.stack.setPage(1))
         # page2Button.clicked.connect(lambda: self.stack.setPage(2))
@@ -161,6 +161,8 @@ class gui(QtGui.QMainWindow):
         self.page4.add_user.triggered.connect(lambda: self.stack.setPage(1))
         self.page4.rm_user.triggered.connect(lambda: self.stack.setPage(4))
         self.page4.Prog.triggered.connect(lambda: self.stack.setPage(3))
+        
+
 
     def center(self):
 
@@ -185,6 +187,7 @@ class Pagesetup(QtGui.QWidget):
                                 QtCore.Qt.AlignVCenter)
         # User Name
         self.Box1 = QtGui.QComboBox()
+        self.Box1.setEditable(True)
         self.Label1 = QtGui.QLabel()
         self.Label1.setText(_fromUtf8("User Name:"))
         self.Label1.setFont(font_L)
@@ -207,6 +210,12 @@ class Pagesetup(QtGui.QWidget):
         self.Label4 = QtGui.QLabel()
         self.Label4.setText(_fromUtf8("Advisor:"))
         self.Label4.setFont(font_L)
+        # Email
+        self.Box5 = QtGui.QLineEdit()
+        self.Box5.setCursor(QtGui.QCursor(QtCore.Qt.IBeamCursor))
+        self.Label5 = QtGui.QLabel()
+        self.Label5.setText(_fromUtf8("Email:"))
+        self.Label5.setFont(font_L)
 
     # Setup Buttons
         # Start, Add Button
@@ -289,6 +298,7 @@ class Page0(Pagesetup):
         self.FormLayout.addRow(self.Label2, self.Box2)
         self.FormLayout.addRow(self.Label3, self.Box3)
         self.FormLayout.addRow(self.Label4, self.Box4)
+        self.FormLayout.addRow(self.Label5, self.Box5)
 
     # Setup Vertical Box Layout
         self.vbox = QtGui.QVBoxLayout()
@@ -334,6 +344,7 @@ class Page1(Pagesetup):
         self.FormLayout.addRow(self.Label2, self.Box2)
         self.FormLayout.addRow(self.Label3, self.Box3)
         self.FormLayout.addRow(self.Label4, self.Box4)
+        self.FormLayout.addRow(self.Label5, self.Box5)
 
         # Buttons (horisontal box)
         self.hbox = QtGui.QHBoxLayout()
@@ -369,6 +380,7 @@ class Page2(Pagesetup):
         # Start Time
         self.Label2.setText(_fromUtf8("Start Time:"))
         self.Box2.setReadOnly(True)
+        self.Box2.setEchoMode(QtGui.QLineEdit.Normal)
         self.Box2.setStyleSheet(styl)
         # Total time
         self.Label3.setText(_fromUtf8("Total Time Today [mins]:"))
@@ -505,7 +517,7 @@ class Page5(Pagesetup):
         self.Label3.setText(_fromUtf8("New Password:"))
         self.Label4.setText(_fromUtf8("Repeat Password:"))
         self.Box3.setEchoMode(QtGui.QLineEdit.Password)
-        self.Box3.setEchoMode(QtGui.QLineEdit.Password)
+        self.Box4.setEchoMode(QtGui.QLineEdit.Password)
 
         self.StartButton.setText("Submit")
         self.QuitButton.setText("Cancel")
