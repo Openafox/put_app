@@ -32,7 +32,8 @@ def Addusr(name, pass1, pass2, advisor, email):
         tim = time.strftime("%y-%m-%d-%H:%M")  # lastlogin
         with open("Pass.txt", "r") as data_file:
             for row in data_file:
-                if name in row:
+                data = row.split("\t")
+                if name == data[0]:
                     return "User Name Exists. <br> Please select another."
         with open("Pass.txt", "a") as out_file:
             out_file.write("%s\t%s\t%s\tindex\t%s\t%s\t\n" %
@@ -83,8 +84,9 @@ def getuserdata(name, remove=True):
         userdata = []
     with open("Pass.txt", "w") as out_file:
         for row in data_file:
-            if name in row:
-                userdata = row.split("\t")
+            data = row.split("\t")
+            if name == data[0]:
+                userdata = data
                 # print userdata 
                 if not remove:
                     out_file.write(row)
@@ -106,10 +108,11 @@ def passtest(pass1, pass2):
 def checkpass(name, pass1):  # Check Password
     with open("Pass.txt") as data_file:
         for row in data_file:
-            if name in row:
-                userdat = row.split("\t")
+            data = row.split("\t")
+            if name == data[0]:
+                userdata = data
                 # print userdat[1]
-                if isPassword(pass1, userdat[1]):
+                if isPassword(pass1, userdata[1]):
                     # print "You Got It!!"
                     return True
                 else:

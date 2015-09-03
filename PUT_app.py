@@ -19,6 +19,7 @@ import Pass     # My Password Modul
 import subprocess  # running other processes
 import WinShorts  # My Modul for changing and checking windows shortcuts
 
+
 class APP(PUT_Gui.gui):
     """"This Class is used to create the Gui for the PUT_app and
     to controll it."""
@@ -47,12 +48,13 @@ class APP(PUT_Gui.gui):
         self.page3.ChButton.clicked.connect(self.program_short_ch)
         self.page4.StartButton.clicked.connect(self.user_rm)
         self.page5.StartButton.clicked.connect(self.user_chpass)
-        
+
         # on page start
         self.stack.currentChanged.connect(self.refresh)
 
-        # 
-        self.page0.Box1.currentIndexChanged.connect(lambda: self.user_update(False))
+        # if page changes
+        self.page0.Box1.currentIndexChanged.connect(lambda:
+                                                    self.user_update(False))
         self.refresh()
         self.show()         # show the Gui
 
@@ -104,14 +106,14 @@ class APP(PUT_Gui.gui):
                     fname = "%s_Log.csv" % str(time.strftime("%y_%m"))
                     with open(fname, "r") as data_file:
                         for row in data_file:
-                            if name in row:
-                                data = row.split(",")
-                                ti = time.strptime(data[4],"%H:%M:%S")
+                            data = row.split(",")
+                            if name == data[1]:
+                                ti = time.strptime(data[4], "%H:%M:%S")
                                 hr += ti[3] + ti[4]/60.0 + ti[5]/3600.0
-                        self.page2.Box4.setText(str(round(hr,2)))
-                                
+                        self.page2.Box4.setText(str(round(hr, 2)))
+
                     self.process = subprocess.Popen([self.dest])
-                    self.program_check() 
+                    self.program_check()
             else:
                 return
         else:
@@ -125,15 +127,16 @@ class APP(PUT_Gui.gui):
         userdata = Pass.getuserdata(name, False)
         index = str(self.page0.Box3.text())
         if index == "index":
-            QtGui.QMessageBox.warning(self, "Index.",
-                                  "You must supply a valid billing index to "\
-                                  "use the instrument.<br>Cost is $30/hr for"\
+            QtGui.QMessageBox.warning(
+                                  self, "Index.",
+                                  "You must supply a valid billing index to "
+                                  "use the instrument.<br>Cost is $30/hr for"
                                   " internal users.", QtGui.QMessageBox.Ok,
                                   QtGui.QMessageBox.NoButton,
                                   QtGui.QMessageBox.NoButton)
             self.page0.Box2.clear()
             return
-        date = time.mktime(time.strptime(userdata[4],"%y-%m-%d-%H:%M"))
+        date = time.mktime(time.strptime(userdata[4], "%y-%m-%d-%H:%M"))
         month = 30*24*60*60
         duration = time.time() - date
         if duration > month * 12:
@@ -176,7 +179,6 @@ class APP(PUT_Gui.gui):
             self.page0.Box2.setFocus()
 
 
-
 # Check if program is running
     def program_check(self):
         if self.process.poll() != None:
@@ -214,7 +216,7 @@ class APP(PUT_Gui.gui):
         fname = "%s_Log.csv" % str(time.strftime("%y_%m"))
         with open(fname, "a") as out_file:
             out_file.write(data)
-        
+
 
 # Set up program to start and change all shortcuts
     def program_setup(self):
@@ -231,18 +233,18 @@ class APP(PUT_Gui.gui):
     def program_short_ch(self):
         me_path = os.path.realpath(__file__)
         print me_path
-        if WinShorts.check_win() is False:     
+        if WinShorts.check_win() is False:
             self.win_only()
         else:
-            files = WinShorts.find_links() # need to test depth = 1
+            files = WinShorts.find_links()  # need to test depth = 1
             WinShorts.change_links(self.dest, me_path, files)
 
 # Set up program to start and change all shortcuts
     def program_short_rev(self):
-        if WinShorts.check_win() is False:     
+        if WinShorts.check_win() is False:
             self.win_only()
         else:
-            files = WinShorts.find_links() # need to test depth = 1
+            files = WinShorts.find_links()  # need to test depth = 1
             WinShorts.change_links(self.dest, self.dest, files)
 
 # Message for Win only features
@@ -308,7 +310,7 @@ class APP(PUT_Gui.gui):
                 QtGui.QMessageBox.No, QtGui.QMessageBox.No
                 )
 
-        index =  self.stack.currentIndex()
+        index = self.stack.currentIndex()
         if reply == QtGui.QMessageBox.Yes:
             if index == 2:
                 self.user_log()
