@@ -220,13 +220,20 @@ class APP(PUT_Gui.gui):
 
 # Set up program to start and change all shortcuts
     def program_setup(self):
-        fname = QtGui.QFileDialog.getOpenFileName(self, 'Program to run',
-                                                  '/home')
-        if fname:
-            with open("Dest.txt", "w") as data_file:
-                data_file.write(fname)
-            self.dest = fname
-            self.page3.Box1.setText(self.dest)
+        reply = QtGui.QMessageBox.question(
+                self, 'Message',
+                "Did you reset the shortcuts? Proceed?",
+                QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
+                QtGui.QMessageBox.No
+                )
+        if reply == QtGui.QMessageBox.Yes:
+            fname = QtGui.QFileDialog.getOpenFileName(self, 'Program to run',
+                                                      '/home')
+            if fname:
+                with open("Dest.txt", "w") as data_file:
+                    data_file.write(fname)
+                self.dest = fname
+                self.page3.Box1.setText(self.dest)
 
 
 # Set up program to start and change all shortcuts
