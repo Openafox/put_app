@@ -52,7 +52,7 @@ def userup(userdata):
 
 def changepass(name, oldpass, pass1, pass2):  # this is not right yet
     check = checkpass(name, oldpass)
-    if check is True:
+    if check is True or check[0:2] == "No":
         test = passtest(pass1, pass2)
         if test is True:
             hashed = getDigest(pass1)
@@ -97,7 +97,7 @@ def getuserdata(name, remove=True):
 
 def passtest(pass1, pass2):
     if pass1 == pass2:
-        if len(pass1) >= 5:
+        if len(pass1) >= 6:
             return True
         else:
             return "Password must be atlest 6 characters long."
@@ -112,6 +112,10 @@ def checkpass(name, pass1):  # Check Password
             if name == data[0]:
                 userdata = data
                 # print userdat[1]
+                if userdata[1] == "":
+                    return "No Password is set.<br>Please change password"\
+                           " leaving old password BLANK.<br>"\
+                           "-> Menu -> Change Password"
                 if isPassword(pass1, userdata[1]):
                     # print "You Got It!!"
                     return True
