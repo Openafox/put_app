@@ -29,12 +29,12 @@ def Addusr(name, pass1, pass2, advisor, email):
             return "Please provide Advisor."
         hashed = getDigest(pass1)
         tim = time.strftime("%y-%m-%d-%H:%M")  # lastlogin
-        with open("Pass.txt", "r") as data_file:
+        with open("data/Pass.txt", "r") as data_file:
             for row in data_file:
                 data = row.split("\t")
                 if name == data[0]:
                     return "User Name Exists. <br> Please select another."
-        with open("Pass.txt", "a") as out_file:
+        with open("data/Pass.txt", "a") as out_file:
             out_file.write("%s\t%s\t%s\tindex\t%s\t%s\t\n" %
                            (name, hashed, advisor, tim, email))
             return "Success!<br>%s Added as new user!!" % name
@@ -43,7 +43,7 @@ def Addusr(name, pass1, pass2, advisor, email):
 
 
 def userup(userdata):
-    with open("Pass.txt", "a") as out_file:
+    with open("data/Pass.txt", "a") as out_file:
             userdata = '\t'.join(userdata)
             out_file.write(userdata)
             return "Success!"
@@ -67,26 +67,26 @@ def changepass(name, oldpass, pass1, pass2):  # this is not right yet
 
 def getallusers():
     allusers = []
-    with open("Pass.txt") as data_file:
+    with open("data/Pass.txt") as data_file:
         for row in data_file:
             userdat = row.split("\t")
             allusers.append(userdat[0])
-    allusers.sort() 
+    allusers.sort()
     # print allusers
     return allusers
 
 
 def getuserdata(name, remove=True):
     # print "name:", name
-    with open("Pass.txt", "r") as f:
+    with open("data/Pass.txt", "r") as f:
         data_file = f.readlines()
         userdata = []
-    with open("Pass.txt", "w") as out_file:
+    with open("data/Pass.txt", "w") as out_file:
         for row in data_file:
             data = row.split("\t")
             if name == data[0]:
                 userdata = data
-                # print userdata 
+                # print userdata
                 if not remove:
                     out_file.write(row)
             else:
@@ -105,7 +105,7 @@ def passtest(pass1, pass2):
 
 
 def checkpass(name, pass1):  # Check Password
-    with open("Pass.txt") as data_file:
+    with open("data/Pass.txt") as data_file:
         for row in data_file:
             data = row.split("\t")
             if name == data[0]:

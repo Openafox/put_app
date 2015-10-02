@@ -29,7 +29,7 @@ class APP(PUT_Gui.gui):
     def run(self):
         # define "globals"
         self.quit = False
-        with open("Dest.txt", "r") as data_file:
+        with open("data/Dest.txt", "r") as data_file:
             self.dest = data_file.readline()
         # print self.dest
         self.page3.Box1.setText(self.dest)
@@ -98,7 +98,7 @@ class APP(PUT_Gui.gui):
                     self.stack.setPage(2)
                     self.quit = False
                     hr = 0.0
-                    fname = "%s_Log.csv" % str(time.strftime("%y_%m"))
+                    fname = "data/%s_Log.csv" % str(time.strftime("%y_%m"))
                     with open(fname, "r") as data_file:
                         for row in data_file:
                             data = row.split(",")
@@ -208,7 +208,7 @@ class APP(PUT_Gui.gui):
         date = str(self.page2.Box3.text())
         data = [start, user, advisor, index, date, "\n"]
         data = ','.join(data)
-        fname = "%s_Log.csv" % str(time.strftime("%y_%m"))
+        fname = "data/%s_Log.csv" % str(time.strftime("%y_%m"))
         with open(fname, "a") as out_file:
             out_file.write(data)
 
@@ -225,7 +225,7 @@ class APP(PUT_Gui.gui):
             fname = QtGui.QFileDialog.getOpenFileName(self, 'Program to run',
                                                       '/home')
             if fname:
-                with open("Dest.txt", "w") as data_file:
+                with open("data/Dest.txt", "w") as data_file:
                     data_file.write(fname)
                 self.dest = fname
                 self.page3.Box1.setText(self.dest)
@@ -280,11 +280,12 @@ class APP(PUT_Gui.gui):
                                   QtGui.QMessageBox.Ok,
                                   QtGui.QMessageBox.NoButton,
                                   QtGui.QMessageBox.NoButton)
-        self.page1.Box1.clear()
-        self.page1.Box2.clear()
-        self.page1.Box3.clear()
-        self.page1.Box4.clear()
-        self.page1.Box5.clear()
+        if mess[0:3] == 'Suc':
+            self.page1.Box1.clear()
+            self.page1.Box2.clear()
+            self.page1.Box3.clear()
+            self.page1.Box4.clear()
+            self.page1.Box5.clear()
 
 # Remove a user after checking admin Password
     def user_rm(self):
