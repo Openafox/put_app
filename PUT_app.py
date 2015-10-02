@@ -8,23 +8,18 @@ A -- apple
 # Program is distributed under the terms of the
 # GNU General Public License see ./License for more information.
 
-import pdb
-import sys
 import os
 from PyQt4 import QtCore, QtGui
 import sys  # list of comand line argus need to run Gui
 import PUT_Gui
 import time        # yep importing time that way we can go back to the future
 import Pass     # My Password Modul
-import subprocess  # running other processes
 import WinShorts  # My Modul for changing and checking windows shortcuts
 
 
 class APP(PUT_Gui.gui):
     """"This Class is used to create the Gui for the PUT_app and
     to controll it."""
-
-# Creat a python signal that will be used to pass app history stuff
 
     def __init__(self):
         QtGui.QWidget.__init__(self)
@@ -45,7 +40,7 @@ class APP(PUT_Gui.gui):
         self.page2.QuitButton.clicked.connect(self.program_close)
         self.page3.StartButton.clicked.connect(self.program_setup)
         self.page3.QuitButton.clicked.connect(self.program_short_rev)
-        self.page3.ChButton.clicked.connect(self.program_short_ch)
+        self.page3.ChButton.clicked.connect(lambda:self.program_short_ch())
         self.page4.StartButton.clicked.connect(self.user_rm)
         self.page5.StartButton.clicked.connect(self.user_chpass)
 
@@ -237,22 +232,32 @@ class APP(PUT_Gui.gui):
 
 
 # Set up program to start and change all shortcuts
-    def program_short_ch(self):
-        me_path = os.path.realpath(__file__)
-        print me_path
+    def program_short_ch(self, new_path=1):
+        if new_path == 1:
+            new_path = os.path.realpath(__file__)
+            print "path"
+        print "Path=", new_path
         if WinShorts.check_win() is False:
             self.win_only()
         else:
-            files = WinShorts.find_links()  # need to test depth = 1
-            WinShorts.change_links(self.dest, me_path, files)
+            files = WinShorts.find_all_links()  # need to test depth = 1
+            matches = WinShorts.find_links_to_path(self.dest, files)
+            for match in matches:
+                reply = QtGui.QMessageBox.question(
+                        self, 'Message',
+                        "Change %s ?(y,n)" % match[1],
+                        QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
+                        QtGui.QMessageBox.No
+                        )
+                if reply == QtGui.QMessageBox.Yes:
+                    print "Changing %s \n to %s" % (match[1], new_path)
+                    WinShorts.change_link(match[0], match[1], self.dest,
+                                          new_path)
 
 # Set up program to start and change all shortcuts
     def program_short_rev(self):
-        if WinShorts.check_win() is False:
-            self.win_only()
-        else:
-            files = WinShorts.find_links()  # need to test depth = 1
-            WinShorts.change_links(self.dest, self.dest, files)
+        self.program_short_ch(self.dest)
+
 
 # Message for Win only features
     def win_only(self):

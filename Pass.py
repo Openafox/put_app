@@ -1,4 +1,3 @@
-import pdb
 #!/usr/bin/env python
 """This module performs simple password tasks
 
@@ -129,5 +128,10 @@ def checkpass(name, pass1):  # Check Password
 if __name__ == "__main__":
     print Addusr("Admin", "Password", "Password", "Glob", "email")
     print Addusr("Joe", "123456", "123456", "Glob", "email")
-    print checkpass("Admin", "Pass")
+    while True:
+        name = raw_input('User Name:')
+        pass1 = raw_input('Password:')
+        print checkpass(name, pass1)
+        if name == 'quit':
+            break
     print checkpass("Joe", "123456")
