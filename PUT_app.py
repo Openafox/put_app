@@ -14,22 +14,38 @@ import sys  # list of comand line argus need to run Gui
 import PUT_Gui
 import time        # yep importing time that way we can go back to the future
 import Pass     # My Password Modul
-import WinShorts  # My Modul for changing and checking windows shortcuts
+import subprocess
+
+if sys.platform in ["win32", "cygwin"]:
+    print "windows"
+    import WinShorts  # My Modul for changing and checking windows shortcuts
+else:
+    import NotWinShorts as WinShorts  # My Mock Modul for debug
 
 
 class APP(PUT_Gui.gui):
     """"This Class is used to create the Gui for the PUT_app and
     to controll it."""
 
-    def __init__(self):
-        QtGui.QWidget.__init__(self)
-        self.setupUi(self)  # See PUT GUI
-        # initialize the serial connections
+    if getattr(sys, 'frozen', False):
+        # we are running in a |PyInstaller| bundle
+        base_path = sys._MEIPASS
+        me_path = os.path.join(base_path, sys.argv[0])
+    else:
+        # we are running in a normal Python environment
+        me_path = os.path.realpath(__file__)
+        base_path = os.path.dirname(me_path)
+
+    print base_path
+    print me_path
+
+    def rel_path(self, folder, name):
+        return os.path.join(self.base_path, folder, name)
 
     def run(self):
         # define "globals"
         self.quit = False
-        with open("data/Dest.txt", "r") as data_file:
+        with open(self.rel_path('data', 'Dest.txt'), "r") as data_file:
             self.dest = data_file.readline()
         # print self.dest
         self.page3.Box1.setText(self.dest)
@@ -40,7 +56,7 @@ class APP(PUT_Gui.gui):
         self.page2.QuitButton.clicked.connect(self.program_close)
         self.page3.StartButton.clicked.connect(self.program_setup)
         self.page3.QuitButton.clicked.connect(self.program_short_rev)
-        self.page3.ChButton.clicked.connect(lambda:self.program_short_ch())
+        self.page3.ChButton.clicked.connect(lambda: self.program_short_ch())
         self.page4.StartButton.clicked.connect(self.user_rm)
         self.page5.StartButton.clicked.connect(self.user_chpass)
 
@@ -98,7 +114,9 @@ class APP(PUT_Gui.gui):
                     self.stack.setPage(2)
                     self.quit = False
                     hr = 0.0
-                    fname = "data/%s_Log.csv" % str(time.strftime("%y_%m"))
+                    fname = self.rel_path(
+                            "data",
+                            "%s_Log.csv" % str(time.strftime("%y_%m")))
                     with open(fname, "r") as data_file:
                         for row in data_file:
                             data = row.split(",")
@@ -140,6 +158,7 @@ class APP(PUT_Gui.gui):
                    "<br>Please contact the XRD Manager to reactivate your"\
                    " account pending training."
             out = False
+
         elif duration > month * 6:
             mess = "You have not used the instrument for Greater than 6 "\
                    "months!<br>If you at all feel unconfortable using the "\
@@ -208,7 +227,8 @@ class APP(PUT_Gui.gui):
         date = str(self.page2.Box3.text())
         data = [start, user, advisor, index, date, "\n"]
         data = ','.join(data)
-        fname = "data/%s_Log.csv" % str(time.strftime("%y_%m"))
+        fname = self.rel_path("data",
+                              "%s_Log.csv" % str(time.strftime("%y_%m")))
         with open(fname, "a") as out_file:
             out_file.write(data)
 
@@ -225,7 +245,7 @@ class APP(PUT_Gui.gui):
             fname = QtGui.QFileDialog.getOpenFileName(self, 'Program to run',
                                                       '/home')
             if fname:
-                with open("data/Dest.txt", "w") as data_file:
+                with open(self.rel_path('data', 'Dest.txt'), "w") as data_file:
                     data_file.write(fname)
                 self.dest = fname
                 self.page3.Box1.setText(self.dest)
@@ -234,7 +254,7 @@ class APP(PUT_Gui.gui):
 # Set up program to start and change all shortcuts
     def program_short_ch(self, new_path=1):
         if new_path == 1:
-            new_path = os.path.realpath(__file__)
+            new_path = self.me_path
             print "path"
         print "Path=", new_path
         if WinShorts.check_win() is False:
