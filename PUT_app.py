@@ -22,6 +22,11 @@ if sys.platform in ["win32", "cygwin"]:
 else:
     import NotWinShorts as WinShorts  # My Mock Modul for debug
 
+# Only allow a single instance (singleton) of the App to run
+# http://stackoverflow.com/questions/380870/python-single-instance-of-program
+from tendo import singleton
+me = singleton.SingleInstance() # will sys.exit(-1) if other instance is running
+
 
 class APP(PUT_Gui.gui):
     """"This Class is used to create the Gui for the PUT_app and
@@ -46,7 +51,7 @@ class APP(PUT_Gui.gui):
         # define "globals"
         self.quit = False
         with open(self.rel_path('data', 'Dest.txt'), "r") as data_file:
-            self.dest = data_file.readline()
+            self.dest = str(data_file.readline())
         # print self.dest
         self.page3.Box1.setText(self.dest)
         self.process = None
@@ -247,7 +252,7 @@ class APP(PUT_Gui.gui):
             if fname:
                 with open(self.rel_path('data', 'Dest.txt'), "w") as data_file:
                     data_file.write(fname)
-                self.dest = fname
+                self.dest = os.path.normpath(str(fname))
                 self.page3.Box1.setText(self.dest)
 
 
