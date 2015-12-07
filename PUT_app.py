@@ -52,7 +52,7 @@ class APP(PUT_Gui.gui):
         # define "globals"
         self.quit = False
         with open(self.rel_path('data', 'Dest.txt'), "r") as data_file:
-            self.dest = str(data_file.readline())
+            self.dest = os.path.normpath(str(data_file.readline()))
         # print self.dest
         self.page3.Box1.setText(self.dest)
         self.process = None
@@ -78,7 +78,7 @@ class APP(PUT_Gui.gui):
         fname = self.rel_path("data", "Notes.txt")
         with open(fname, "r") as data_file:
             last = None
-            for last in (line for line in data_file if line.rstrip('\n')):
+            for last in (line.rstrip('\n') for line in data_file if line.rstrip('\n')):
                 pass
             self.Note.setText(last)
 
@@ -267,7 +267,7 @@ class APP(PUT_Gui.gui):
                                                       '/home')
             if fname:
                 with open(self.rel_path('data', 'Dest.txt'), "w") as data_file:
-                    data_file.write(fname)
+                    data_file.write(os.path.normpath(str(fname)))
                 self.dest = os.path.normpath(str(fname))
                 self.page3.Box1.setText(self.dest)
 
@@ -276,13 +276,21 @@ class APP(PUT_Gui.gui):
     def program_short_ch(self, new_path=1):
         if new_path == 1:
             new_path = self.me_path
-            print "path"
+            # print "path"
         print "Path=", new_path
         if WinShorts.check_win() is False:
             self.win_only()
         else:
             files = WinShorts.find_all_links()  # need to test depth = 1
+            # print files
             matches = WinShorts.find_links_to_path(self.dest, files)
+            # print matches
+            if matches == []:
+                text = "No Matches Found!\nCheck shortcut pointer path"
+                QtGui.QMessageBox.warning(self, "Error!",
+                                          text, QtGui.QMessageBox.Ok,
+                                          QtGui.QMessageBox.NoButton,
+                                          QtGui.QMessageBox.NoButton)
             for match in matches:
                 reply = QtGui.QMessageBox.question(
                         self, 'Message',
@@ -368,11 +376,20 @@ class APP(PUT_Gui.gui):
         if reply == QtGui.QMessageBox.Yes:
             if index == 2:
                 self.user_log()
+                self.program_close()
             # Save Notes
             fname = self.rel_path("data", "Notes.txt")
             note = '<br>'.join(str(self.Note.toPlainText()).split('\n'))
-            with open(fname, "a") as out_file:
-                out_file.write(note + '\n')
+            fname = self.rel_path("data", "Notes.txt")
+            with open(fname, "r") as data_file:
+                last = None
+                for last in (line.rstrip('\n') for line in data_file if line.rstrip('\n')):
+                    pass
+            print note
+            print last
+            if note != last:
+                with open(fname, "a") as out_file:
+                    out_file.write(note + '\n')
 
             event.accept()
         else:
