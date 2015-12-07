@@ -28,6 +28,7 @@ from tendo import singleton
 # will sys.exit(-1) if other instance is running
 me = singleton.SingleInstance()
 
+
 class APP(PUT_Gui.gui):
     """"This Class is used to create the Gui for the PUT_app and
     to controll it."""
@@ -73,6 +74,14 @@ class APP(PUT_Gui.gui):
         # if page changes
         self.page0.Box1.currentIndexChanged.connect(lambda:
                                                     self.user_update(False))
+        # Populate Notes
+        fname = self.rel_path("data", "Notes.txt")
+        with open(fname, "r") as data_file:
+            last = None
+            for last in (line for line in data_file if line.rstrip('\n')):
+                pass
+            self.Note.setText(last)
+
         self.refresh()
         self.show()         # show the Gui
 
@@ -135,6 +144,7 @@ class APP(PUT_Gui.gui):
                             self.page2.Box4.setText(str(round(hr, 2)))
                     except:
                         pass  # do nothing just keep going
+                        # file does not exist and parse errors
 
                     self.process = subprocess.Popen([self.dest])
                     self.program_check()
@@ -358,6 +368,12 @@ class APP(PUT_Gui.gui):
         if reply == QtGui.QMessageBox.Yes:
             if index == 2:
                 self.user_log()
+            # Save Notes
+            fname = self.rel_path("data", "Notes.txt")
+            note = '<br>'.join(str(self.Note.toPlainText()).split('\n'))
+            with open(fname, "a") as out_file:
+                out_file.write(note + '\n')
+
             event.accept()
         else:
             event.ignore()
