@@ -25,8 +25,8 @@ else:
 # Only allow a single instance (singleton) of the App to run
 # http://stackoverflow.com/questions/380870/python-single-instance-of-program
 from tendo import singleton
-me = singleton.SingleInstance() # will sys.exit(-1) if other instance is running
-
+# will sys.exit(-1) if other instance is running
+me = singleton.SingleInstance()
 
 class APP(PUT_Gui.gui):
     """"This Class is used to create the Gui for the PUT_app and
@@ -64,6 +64,8 @@ class APP(PUT_Gui.gui):
         self.page3.ChButton.clicked.connect(lambda: self.program_short_ch())
         self.page4.StartButton.clicked.connect(self.user_rm)
         self.page5.StartButton.clicked.connect(self.user_chpass)
+        # connet eneter to start
+        self.page0.Box2.returnPressed.connect(self.program_start)
 
         # on page start
         self.stack.currentChanged.connect(self.refresh)
@@ -122,13 +124,17 @@ class APP(PUT_Gui.gui):
                     fname = self.rel_path(
                             "data",
                             "%s_Log.csv" % str(time.strftime("%y_%m")))
-                    with open(fname, "r") as data_file:
-                        for row in data_file:
-                            data = row.split(",")
-                            if name == data[1]:
-                                ti = time.strptime(data[4], "%H:%M:%S")
-                                hr += ti[3] + ti[4]/60.0 + ti[5]/3600.0
-                        self.page2.Box4.setText(str(round(hr, 2)))
+                    # Get time this month
+                    try:
+                        with open(fname, "r") as data_file:
+                            for row in data_file:
+                                data = row.split(",")
+                                if name == data[1]:
+                                    ti = time.strptime(data[4], "%H:%M:%S")
+                                    hr += ti[3] + ti[4]/60.0 + ti[5]/3600.0
+                            self.page2.Box4.setText(str(round(hr, 2)))
+                    except:
+                        pass  # do nothing just keep going
 
                     self.process = subprocess.Popen([self.dest])
                     self.program_check()

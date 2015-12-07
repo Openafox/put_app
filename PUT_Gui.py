@@ -161,7 +161,6 @@ class gui(QtGui.QMainWindow):
         self.page4.add_user.triggered.connect(lambda: self.stack.setPage(1))
         self.page4.rm_user.triggered.connect(lambda: self.stack.setPage(4))
         self.page4.Prog.triggered.connect(lambda: self.stack.setPage(3))
-        
 
 
     def center(self):
@@ -223,6 +222,8 @@ class Pagesetup(QtGui.QWidget):
         self.StartButton.resize(100, 60)
         self.StartButton.setFont(font_B)
         self.StartButton.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.StartButton.setAutoDefault(True)
+
         # Quit Button
         self.QuitButton = QtGui.QPushButton("Quit")
         self.QuitButton.resize(100, 60)
