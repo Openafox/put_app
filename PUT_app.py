@@ -59,14 +59,17 @@ class APP(PUT_Gui.gui):
         # Set up Button Click and change event refs (Slots)
         self.page0.StartButton.clicked.connect(self.program_start)
         self.page1.StartButton.clicked.connect(self.user_add)
-        self.page2.QuitButton.clicked.connect(self.program_close)
+        self.page2.QuitButton.clicked.connect(self.program_clmess)
         self.page3.StartButton.clicked.connect(self.program_setup)
         self.page3.QuitButton.clicked.connect(self.program_short_rev)
         self.page3.ChButton.clicked.connect(lambda: self.program_short_ch())
         self.page4.StartButton.clicked.connect(self.user_rm)
         self.page5.StartButton.clicked.connect(self.user_chpass)
-        # connet eneter to start
-        self.page0.Box2.returnPressed.connect(self.program_start)
+        # Page 0 return to next box and start on last
+        self.page0.Box2.returnPressed.connect(self.page0.Box3.setFocus)
+        self.page0.Box3.returnPressed.connect(self.page0.Box4.setFocus)
+        self.page0.Box4.returnPressed.connect(self.page0.Box5.setFocus)
+        self.page0.Box5.returnPressed.connect(self.program_start)
 
         # on page start
         self.stack.currentChanged.connect(self.refresh)
@@ -151,6 +154,8 @@ class APP(PUT_Gui.gui):
             else:
                 return
         else:
+            self.page0.Box2.clear()
+            self.page0.Box2.setFocus()
             QtGui.QMessageBox.warning(self, "Incorrect username or password!",
                                       test, QtGui.QMessageBox.Ok,
                                       QtGui.QMessageBox.NoButton,
@@ -160,31 +165,32 @@ class APP(PUT_Gui.gui):
     def user_checks(self, name):
         userdata = Pass.getuserdata(name, False)
         index = str(self.page0.Box3.text())
-        if index == "index":
+        if index == "index" or index is None or index == "":
+            mess = ("You must supply a valid billing index to use the "
+                    "instrument.\nCost is $35/hr for internal users.")
             QtGui.QMessageBox.warning(
-                                  self, "Index.",
-                                  "You must supply a valid billing index to "
-                                  "use the instrument.<br>Cost is $30/hr for"
-                                  " internal users.", QtGui.QMessageBox.Ok,
+                                  self, "Index.", mess,
+                                  QtGui.QMessageBox.Ok,
                                   QtGui.QMessageBox.NoButton,
                                   QtGui.QMessageBox.NoButton)
             self.page0.Box2.clear()
+            self.page0.Box2.setFocus()
             return
         date = time.mktime(time.strptime(userdata[4], "%y-%m-%d-%H:%M"))
         month = 30*24*60*60
         duration = time.time() - date
         if duration > month * 12:
-            mess = "You have not used the instrument for Greater than 1 year!"\
-                   "<br>Your account has been suspended." \
-                   "<br>Please contact the XRD Manager to reactivate your"\
-                   " account pending training."
+            mess = ("You have not used the instrument for Greater than 1 year!"
+                   "\nYour account has been suspended."
+                   "\nPlease contact the XRD Manager to reactivate your"
+                   " account pending training.")
             out = False
 
         elif duration > month * 6:
-            mess = "You have not used the instrument for Greater than 6 "\
-                   "months!<br>If you at all feel unconfortable using the "\
-                   "instrument. Please contact the XRD Manager"\
-                   " for assistance.<br>Do not break me! I will cut you!"
+            mess = ("You have not used the instrument for Greater than 6 "
+                    "months!\nIf you at all feel unconfortable using the "
+                    "instrument. Please contact the XRD Manager"
+                    " for assistance.\nDo not break me! I will cut you!")
             out = True
         else:
             return True
@@ -193,6 +199,7 @@ class APP(PUT_Gui.gui):
                                   QtGui.QMessageBox.NoButton,
                                   QtGui.QMessageBox.NoButton)
         self.page0.Box2.clear()
+        self.page0.Box2.setFocus()
         return out
 
 # Update user information when name selected
@@ -231,7 +238,19 @@ class APP(PUT_Gui.gui):
             self.user_log()
             self.stack.setPage(0)
 
-
+    def program_clmess(self):
+        # message on quit from page 2
+        mess = ("Are you sure to quit?\nThe scan finished?\nData is saved?"
+                "\nX-Ray generator is turned down(20,5)"
+                "and laser is off(OC16,0)?")
+        reply = QtGui.QMessageBox.question(
+                self, 'Message', mess, 
+                QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
+                QtGui.QMessageBox.No)
+        if reply == QtGui.QMessageBox.Yes:
+            self.program_close()
+            
+            
 # Quit the program
     def program_close(self):
         self.quit = True
@@ -366,13 +385,18 @@ class APP(PUT_Gui.gui):
 
 # ###            Capture Close and do Stuff          ####
     def closeEvent(self, event):
-        reply = QtGui.QMessageBox.question(
-                self, 'Message',
-                "Are you sure to quit?", QtGui.QMessageBox.Yes |
-                QtGui.QMessageBox.No, QtGui.QMessageBox.No
-                )
-
         index = self.stack.currentIndex()
+        if index == 2:
+            mess = ("Are you sure to quit?\nThe scan finished?\nData is saved?"
+                    "\nX-Ray generator is turned down(20,5)"
+                    "and laser is off(OC16,0)?")
+        else:
+            mess = "Are you sure to quit?"
+        reply = QtGui.QMessageBox.question(
+                self, 'Message', mess, 
+                QtGui.QMessageBox.Yes | QtGui.QMessageBox.No, 
+                QtGui.QMessageBox.No)
+
         if reply == QtGui.QMessageBox.Yes:
             if index == 2:
                 self.user_log()
