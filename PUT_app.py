@@ -244,13 +244,13 @@ class APP(PUT_Gui.gui):
                 "\nX-Ray generator is turned down(20,5)"
                 "and laser is off(OC16,0)?")
         reply = QtGui.QMessageBox.question(
-                self, 'Message', mess, 
+                self, 'Message', mess,
                 QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
                 QtGui.QMessageBox.No)
         if reply == QtGui.QMessageBox.Yes:
             self.program_close()
-            
-            
+
+
 # Quit the program
     def program_close(self):
         self.quit = True
@@ -393,8 +393,8 @@ class APP(PUT_Gui.gui):
         else:
             mess = "Are you sure to quit?"
         reply = QtGui.QMessageBox.question(
-                self, 'Message', mess, 
-                QtGui.QMessageBox.Yes | QtGui.QMessageBox.No, 
+                self, 'Message', mess,
+                QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
                 QtGui.QMessageBox.No)
 
         if reply == QtGui.QMessageBox.Yes:
