@@ -43,4 +43,20 @@ Icon*
 # Pyinstaller #
 ###############
 build
+dist
+
+# Backup Files #
+################
+*.swp
+*.swo
+
+# fortran #
+##########
+*.for
+*.dat
+
+# Web stuff #
+#############
+MathJax
+_site
 
