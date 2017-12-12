@@ -15,6 +15,8 @@ github:    https://github.com/openafox/put_app
 
 baseurl: "/put_app"
 url: http://openafox.com/put_app
+images: "/resources/img"
+
 
 # Site configurations
 plugins:
