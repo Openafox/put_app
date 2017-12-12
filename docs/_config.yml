@@ -16,7 +16,7 @@ github:    https://github.com/openafox/put_app
 baseurl: "/put_app"
 url: http://openafox.com/put_app
 
-# Images
+#Images
 images: "/put_app/resources/img"
 
 # Site configurations
@@ -52,6 +52,6 @@ category_page: '/blog/categories'
 
 # Puglins
 mathjax: true # whether support mathjax
-google_analytics_token:  # leave blank if you don't want google analytics
+google_analytics_token: UA-111193604-1 # leave blank if you don't want google analytics
 disqus_short_name: openafox # leave blank if you don't want disqus
 
