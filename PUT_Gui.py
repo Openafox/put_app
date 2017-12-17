@@ -203,11 +203,11 @@ class Pagesetup(QtGui.QWidget):
         self.Label3 = QtGui.QLabel()
         self.Label3.setText(_fromUtf8("Index:"))
         self.Label3.setFont(font_L)
-        # Advisor
+        # Adviser
         self.Box4 = QtGui.QLineEdit()
         self.Box4.setCursor(QtGui.QCursor(QtCore.Qt.IBeamCursor))
         self.Label4 = QtGui.QLabel()
-        self.Label4.setText(_fromUtf8("Advisor:"))
+        self.Label4.setText(_fromUtf8("Adviser:"))
         self.Label4.setFont(font_L)
         # Email
         self.Box5 = QtGui.QLineEdit()
